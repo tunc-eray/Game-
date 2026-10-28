@@ -1,0 +1,10 @@
+{
+  "name": "kart-brokers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "three.js kart oyunu (masaustu/browser)",
+  "scripts": {
+    "test": "node test/scene-test.js",
+    "vendor": "node -e \"const fs=require('fs');fs.mkdirSync('vendor',{recursive:true});if(fs.existsSync('test/vendor/three.min.js'))fs.copyFileSync('test/vendor/three.min.js','vendor/three.min.js');console.log('vendor/three.min.js hazir')\""
+  }
+}
