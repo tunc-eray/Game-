@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Kart Brokers — Kurbağa Büyücüler</title>
+<style>
+  :root {
+    --ink: #eaf3ec;
+    --muted: #9fb3a8;
+    --felt: #1d5f45;
+    --gold: #e6bd63;
+    --panel: rgba(10, 20, 27, .78);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #080d13; color: var(--ink);
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    overflow: hidden;
+  }
+  canvas { display: block; }
+
+  #topbar {
+    position: fixed; left: 0; right: 0; top: 0;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; pointer-events: none;
+  }
+  #seats { display: flex; gap: 8px; }
+  .seat {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel); border: 1px solid rgba(230, 189, 99, .25);
+    border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--muted);
+  }
+  .seat.on { border-color: var(--gold); color: #fff; box-shadow: 0 0 14px rgba(230, 189, 99, .35); }
+  .seat b { color: var(--gold); font-size: 13px; }
+
+  #hud {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 12px 14px 16px;
+  }
+  #msg {
+    min-height: 18px; font-size: 13px; letter-spacing: .2px;
+    color: var(--muted); text-shadow: 0 2px 8px #000;
+  }
+  #row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  button {
+    font: inherit; font-size: 13px; padding: 9px 16px; cursor: pointer;
+    color: var(--ink); background: rgba(24, 44, 38, .92);
+    border: 1px solid rgba(230, 189, 99, .45); border-radius: 10px;
+    transition: transform .12s ease, background .15s ease, opacity .15s ease;
+  }
+  button:hover:not(:disabled) { background: rgba(38, 72, 60, .95); transform: translateY(-1px); }
+  button:disabled { cursor: default; }
+  #btnPass { border-color: rgba(159, 179, 168, .45); }
+  #turn {
+    position: fixed; right: 14px; top: 12px;
+    font-size: 13px; color: var(--gold); background: var(--panel);
+    border: 1px solid rgba(230, 189, 99, .3); border-radius: 999px;
+    padding: 6px 14px;
+  }
+  #deckCount { position: fixed; left: 14px; bottom: 96px; font-size: 12px; color: var(--muted); }
+
+  #how {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(4, 8, 12, .78); backdrop-filter: blur(3px); z-index: 20; padding: 20px;
+  }
+  #how .card-box {
+    max-width: 520px; width: 100%; background: #0e1a21;
+    border: 1px solid rgba(230, 189, 99, .35); border-radius: 16px;
+    padding: 22px 24px; box-shadow: 0 24px 60px rgba(0, 0, 0, .6);
+  }
+  #how h1 { margin: 0 0 6px; font-size: 20px; color: var(--gold); letter-spacing: .4px; }
+  #how p, #how li { font-size: 13.5px; line-height: 1.65; color: #cfdcd3; }
+  #how ul { padding-left: 18px; margin: 10px 0 16px; }
+  #how kbd {
+    background: #1b2a30; border: 1px solid #2f4a4f; border-radius: 5px;
+    padding: 1px 6px; font-size: 12px;
+  }
+  #how .acts { display: flex; gap: 10px; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div id="topbar"><div id="seats"></div></div>
+<div id="turn">Sıra sende</div>
+
+<div id="hud">
+  <div id="msg">Yeni el dağıtıldı.</div>
+  <div id="row">
+    <button id="btnDraw">Desteden çek (boşluk)</button>
+    <button id="btnKeep">Al (1)</button>
+    <button id="btnThrow">Ortaya at (2)</button>
+    <button id="btnBack">Geri koy (3)</button>
+    <button id="btnPass">Pas (p)</button>
+    <button id="btnHow">Nasıl oynanır? (h)</button>
+  </div>
+</div>
+<div id="deckCount">0 kart</div>
+
+<div id="how">
+  <div class="card-box">
+    <h1>Kart Brokers</h1>
+    <p>Masada kurbağa büyücüler var: bağdaş kurmuş, havada süzülüyorlar.
+      Süzülme ve kamera salınımı bilerek çok yavaş tutuldu, miden bulanmaz.</p>
+    <ul>
+      <li><b>Desteden çek:</b> deste kıvrılır, kart önüne gelir.</li>
+      <li><b>Al:</b> çektiğin kart eline girer. <b>Ortaya at:</b> kart masaya gider.</li>
+      <li><b>Geri koy:</b> kart desteye döner, deste düzleşir.</li>
+      <li><b>Elinden kart at:</b> elindeki bir karta tıkla.</li>
+      <li><b>Ortadaki kartı kap:</b> sıra sendeyken ortadaki karta tıkla (kendi kartın değilse).</li>
+      <li>Elini ilk bitiren kazanır. Sıra: <kbd>boşluk</kbd> / <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> / <kbd>p</kbd></li>
+    </ul>
+    <div class="acts">
+      <button id="btnCloseHow">Anladım, başla</button>
+      <button id="btnNew">Yeni el</button>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
