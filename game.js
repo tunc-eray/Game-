@@ -351,10 +351,21 @@ function makeFrogWizard(accent) {
     brow.rotation.x = -0.35;
   }
 
-  /* --- ağız --- */
-  var mouth = addMesh(g, new THREE.TorusGeometry(0.082, 0.008, 6, 20, Math.PI), inkMat, 0, 0.30, 0.145);
-  mouth.rotation.z = Math.PI;
-  mouth.rotation.x = 0.15;
+  /* --- ağız: gövde yüzeyine oturan, gülümseyen nokta dizisi --- */
+  var mouthR = 0.163;
+  var mouthGeo = new THREE.SphereGeometry(0.0105, 8, 6);
+  for (var mt = -3; mt <= 3; mt++) {
+    var tt = mt / 3;
+    var mx = tt * 0.082;
+    var myOff = 0.042 + 0.021 * tt * tt;      /* uçlar yukarı: gülümseme */
+    var mz = Math.sqrt(Math.max(0.004, mouthR * mouthR - (mx / 1.03) * (mx / 1.03) - (myOff / 0.95) * (myOff / 0.95))) * 0.93 + 0.004;
+    var mp = addMesh(g, mouthGeo, inkMat, mx, 0.26 + myOff, mz);
+    mp.scale.set(1.05, 0.72, 0.7);
+  }
+  /* küçük dişler */
+  var toothGeo = new THREE.ConeGeometry(0.009, 0.022, 6);
+  addMesh(g, toothGeo, boneMat, -0.032, 0.291, 0.152).rotation.x = Math.PI;
+  addMesh(g, toothGeo, boneMat, 0.032, 0.291, 0.152).rotation.x = Math.PI;
 
   /* --- deri lekeler --- */
   var spotGeo = new THREE.SphereGeometry(0.026, 10, 8);
@@ -368,8 +379,8 @@ function makeFrogWizard(accent) {
   var belt = addMesh(g, new THREE.TorusGeometry(0.168, 0.019, 8, 24), leather, 0, 0.152, 0);
   belt.rotation.x = Math.PI / 2;
 
-  var strap = addMesh(g, new THREE.TorusGeometry(0.168, 0.016, 8, 24, Math.PI * 0.9), leather, 0, 0.26, 0);
-  strap.rotation.set(1.15, 0.0, 0.5);
+  var strap = addMesh(g, new THREE.TorusGeometry(0.162, 0.013, 8, 22, Math.PI * 0.55), leather, 0, 0.235, -0.02);
+  strap.rotation.set(1.25, 0.0, -1.15);
 
   /* --- yan çanta --- */
   var bag = new THREE.Group();
@@ -407,13 +418,14 @@ function makeFrogWizard(accent) {
   staff.rotation.z = -0.16;
   staff.rotation.x = -0.08;
   g.add(staff);
-  addMesh(staff, new THREE.CylinderGeometry(0.008, 0.009, 0.26, 8), woodMat, 0, 0.0, 0);
-  var skull = addMesh(staff, new THREE.SphereGeometry(0.048, 14, 12), boneMat, 0, 0.158, 0);
+  addMesh(staff, new THREE.CylinderGeometry(0.011, 0.013, 0.27, 8), woodMat, 0, 0.0, 0);
+  addMesh(staff, new THREE.CylinderGeometry(0.017, 0.017, 0.016, 8), leatherDark, 0, 0.10, 0);
+  var skull = addMesh(staff, new THREE.SphereGeometry(0.053, 14, 12), boneMat, 0, 0.168, 0);
   skull.scale.set(1.0, 0.92, 1.08);
-  addMesh(staff, new THREE.BoxGeometry(0.05, 0.028, 0.05), boneMat, 0, 0.122, 0.012);
+  addMesh(staff, new THREE.BoxGeometry(0.054, 0.03, 0.05), boneMat, 0, 0.128, 0.012);
   var socketGeo = new THREE.SphereGeometry(0.014, 8, 8);
-  addMesh(staff, socketGeo, inkMat, -0.018, 0.168, 0.038);
-  addMesh(staff, socketGeo, inkMat, 0.018, 0.168, 0.038);
+  addMesh(staff, socketGeo, inkMat, -0.02, 0.178, 0.042);
+  addMesh(staff, socketGeo, inkMat, 0.02, 0.178, 0.042);
   addMesh(staff, new THREE.SphereGeometry(0.009, 8, 8),
     new THREE.MeshStandardMaterial({ color: 0xc0392b, metalness: 0.5, roughness: 0.3 }), 0, 0.13, 0.045);
 
@@ -431,8 +443,8 @@ function makeFrogWizard(accent) {
   var tip = addMesh(hat, new THREE.ConeGeometry(0.062, 0.14, 16), hatMat, 0.048, 0.32, 0);
   tip.rotation.z = -0.62;
   addMesh(hat, new THREE.SphereGeometry(0.026, 10, 8), hatMat, 0.10, 0.36, 0);
-  var patch = addMesh(hat, new THREE.BoxGeometry(0.055, 0.04, 0.012), leather, -0.05, 0.14, 0.14);
-  patch.rotation.set(0.1, 0.1, 0.2);
+  var patch = addMesh(hat, new THREE.BoxGeometry(0.05, 0.036, 0.01), leather, -0.055, 0.115, 0.098);
+  patch.rotation.set(-0.35, -0.5, 0.15);
 
   g.userData.eyes = eyes;
   return g;
@@ -468,9 +480,9 @@ for (var av = 1; av < 4; av++) {
 
 var SEAT_ANCHOR = [
   new THREE.Vector3(0, HAND_Y, HAND_Z),
-  new THREE.Vector3(0, 1.34, -0.91),
-  new THREE.Vector3(0, 1.34, -0.91),
-  new THREE.Vector3(0, 1.34, -0.91)
+  new THREE.Vector3(0, 1.44, -0.81),
+  new THREE.Vector3(0, 1.44, -0.81),
+  new THREE.Vector3(0, 1.44, -0.81)
 ];
 
 function layoutSeats(n) {
@@ -485,7 +497,7 @@ function layoutSeats(n) {
     a.rotation.set(0, Math.atan2(x, z + 6) * 0.6, 0);
     a.userData.float.base = AVATAR_BASE_Y;
     a.userData.float.rot = a.rotation.y;
-    SEAT_ANCHOR[i + 1].set(x * 0.70, 1.34, z * 0.70);
+    SEAT_ANCHOR[i + 1].set(x * 0.62, 1.44, z * 0.62);
   }
 }
 
@@ -520,7 +532,7 @@ var HAND_DUR = 0.45;
 function slotFor(seat, idx, count) {
   var off = idx - (count - 1) / 2;
   if (seat === 0) {
-    var step = count > 4 ? 0.132 : 0.182;
+    var step = count > 4 ? 0.135 : 0.158;
     return {
       p: new THREE.Vector3(off * step, HAND_Y, HAND_Z),
       q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -off * 0.14, off * 0.02))
@@ -549,8 +561,8 @@ function placeCard(id, p, q, scale, visible, instant) {
 }
 
 var MID_Q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0.10));
-var PEEK_P = new THREE.Vector3(0.34, 1.40, 1.02);
-var PEEK_Q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.10, 0.16, 0));
+var PEEK_P = new THREE.Vector3(0.46, 1.32, 0.85);
+var PEEK_Q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.10, 0.22, 0));
 
 function refresh(instant) {
   var zone = {}, seat, i, id, h, s;
@@ -560,7 +572,7 @@ function refresh(instant) {
     for (i = 0; i < h.length; i++) {
       id = h[i];
       s = slotFor(seat, i, h.length);
-      placeCard(id, s.p, s.q, seat === 0 ? 1 : 0.62, true, instant);
+      placeCard(id, s.p, s.q, seat === 0 ? 0.86 : 0.62, true, instant);
       zone[id] = 1;
     }
   }

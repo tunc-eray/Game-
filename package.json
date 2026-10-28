@@ -5,6 +5,7 @@
   "description": "three.js kart oyunu — bağdaş kurmuş, havada süzülen kurbağa büyücü oyuncular",
   "scripts": {
     "test": "node test/scene-test.js",
-    "serve": "python3 -m http.server 8080"
+    "serve": "python3 -m http.server 8080",
+    "test:ui": "node test/ui-test.js"
   }
 }
