@@ -42,7 +42,8 @@ const I = fn(THREE, doc, {}, () => 0, () => {}, (f) => { LOOP = f; }, W, H, 1, (
   { now: () => clock }, { protocol: "file:", origin: "null", search: "" }, URLSearchParams, undefined, undefined, []);
 
 const seatCount = parseInt(process.argv[2] || "4", 10);
-const outFile = path.join(root, process.argv[3] || "preview.png");
+const outArg = process.argv[3] || "preview.png";
+const outFile = path.isAbsolute(outArg) ? outArg : path.join(root, outArg);
 const mode = process.argv[4] || "";
 
 I.start(seatCount);

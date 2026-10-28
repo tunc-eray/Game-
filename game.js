@@ -49,7 +49,25 @@ var SEAT_NAMES = ["Sen", "Mira", "Kara", "Tilki"];
 
 
 /* ------------------------------ sahne ------------------------------- */
-var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+var GL_OK = true;
+var renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+} catch (eRender) {
+  GL_OK = false;
+  renderer = null;
+}
+if (!renderer) {
+  /* WebGL yok: oyun mantığı çalışsın, ekranda uyarı gösterelim */
+  renderer = {
+    domElement: (typeof document !== "undefined" && document.createElement)
+      ? document.createElement("canvas")
+      : { style: {}, addEventListener: function () {} },
+    setPixelRatio: function () {},
+    setSize: function () {},
+    render: function () {}
+  };
+}
 renderer.setPixelRatio(Math.min(num(typeof devicePixelRatio === "number" ? devicePixelRatio : 1, 1), 2));
 renderer.setSize(num(typeof innerWidth === "number" ? innerWidth : 0, 1280), num(typeof innerHeight === "number" ? innerHeight : 0, 720));
 if (typeof document !== "undefined" && document && document.body && document.body.appendChild) {
@@ -999,6 +1017,14 @@ function boot() {
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     addEventListener("keydown", onKeyDown);
   }
+  if (!GL_OK) {
+    var uy = el("webgl-uyari");
+    if (uy) { uy.style.display = "block"; }
+    var m = el("msg");
+    if (m) m.textContent = "Tarayıcın WebGL açamadı — donanım hızlandırmayı açıp yenile.";
+  }
+  var yuk = el("yukleniyor");
+  if (yuk && yuk.style) yuk.style.display = "none";
   if (REAL_CANVAS) {
     start(2);
     show("how", true);

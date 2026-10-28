@@ -62,6 +62,20 @@
   }
   #deckCount { position: fixed; left: 14px; bottom: 96px; font-size: 12px; color: var(--muted); }
 
+  #yukleniyor {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    font-size: 14px; letter-spacing: .5px; color: var(--gold);
+    background: var(--panel); border: 1px solid rgba(230, 189, 99, .3);
+    border-radius: 999px; padding: 10px 22px; z-index: 25; pointer-events: none;
+  }
+  #webgl-uyari {
+    display: none; position: fixed; left: 50%; top: 64px; transform: translateX(-50%);
+    max-width: 520px; text-align: center; font-size: 13px; line-height: 1.5;
+    color: #ffd7a8; background: rgba(70, 26, 12, .92);
+    border: 1px solid rgba(255, 170, 90, .5); border-radius: 10px;
+    padding: 10px 16px; z-index: 30;
+  }
+
   #how {
     position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
     background: rgba(4, 8, 12, .78); backdrop-filter: blur(3px); z-index: 20; padding: 20px;
@@ -85,6 +99,8 @@
 
 <div id="topbar"><div id="seats"></div></div>
 <div id="turn">Sıra sende</div>
+<div id="yukleniyor">Yükleniyor…</div>
+<div id="webgl-uyari">WebGL başlatılamadı. Chrome/Edge/Firefox'ta “donanım hızlandırma”yı açıp sayfayı yenile.</div>
 
 <div id="hud">
   <div id="msg">Yeni el dağıtıldı.</div>
